@@ -1,15 +1,14 @@
 "use strict";
 
 /*
- * express-fluent-logger
- * Copyright(c) 2014-2015 Toshiya SAITOH
+ * Avian Fluentd Logger
  */
 
 var logger = require('fluent-logger');
-var debug = require('debug')('express-fluent-logger');
+var debug = require('debug')('avian-fluentd-logger');
 
 /**
- * Create a fluent logger middleware.
+ * Create a fluentd logger middleware.
  *
  * @public
  * @param {String|Object} tag
@@ -17,28 +16,11 @@ var debug = require('debug')('express-fluent-logger');
  * @param {Object} options
  * @return {Function}
  */
-exports = module.exports = function expressFluentLogger(tag, label, options) {
-  if (typeof tag === 'object') {
-    options = tag;
-    tag = 'debug';
-  }
+exports = module.exports = function expressFluentLogger(options) {
 
-  if (typeof tag === 'undefined') {
-    tag = 'debug';
-  }
+  options = options || { level: "info", mode: "development", tag: "debug", label: "server", configure: { host: '127.0.0.1', port: 24224, timeout: 3.0 }};
 
-  if (typeof label === 'object') {
-    options = label;
-    label = 'access';
-  }
-
-  if (typeof label === 'undefined') {
-    label = 'access';
-  }
-
-  options = options || { host: '127.0.0.1', port: 24224, timeout: 3.0 };
-
-  logger.configure(tag, options);
+  logger.configure(options.tag, options.configure);
 
   logger.on('error', debug);
 
@@ -47,7 +29,7 @@ exports = module.exports = function expressFluentLogger(tag, label, options) {
     function emitHandler() {
       res.removeListener('finish', emitHandler);
       res.removeListener('close',  emitHandler);
-      var logObject = {
+      var record = {
         'timestamp':      start.getTime(),
         'remote-address': req.ip,
         'method':         req.method,
@@ -59,17 +41,21 @@ exports = module.exports = function expressFluentLogger(tag, label, options) {
         'response-time':  new Date() - start
       };
 
-      // logging request headers.
+      /** 
+       * Request Headers
+       */
       Object.keys(req.headers)
         .filter(function(key) {
           return key !== 'host' && key !== 'connection' && key !== 'referrer' && key !== 'referer';
         })
         .forEach(function(key) {
           key = key.toLowerCase();
-          logObject[key] = req.get(key);
+          record[key] = req.get(key);
         });
 
-      // logging response headers.
+      /** 
+       * Response Headers
+       */
       options.responseHeaders = options.responseHeaders || [];
       options.responseHeaders
         .filter(function(key) {
@@ -77,10 +63,14 @@ exports = module.exports = function expressFluentLogger(tag, label, options) {
         })
         .forEach(function(key) {
           key = key.toLowerCase();
-          logObject[key.toLowerCase()] = res.get(key);
+          record[key.toLowerCase()] = res.get(key);
         });
 
-      logger.emit(label, {level: 'info', mode: process.env.NODE_ENV, logObject});
+      logger.emit(options.label || "server", {
+        level: options.level || "info",
+        mode: options.mode || "development",
+        record
+      });
     }
 
     res.on('finish', emitHandler);
