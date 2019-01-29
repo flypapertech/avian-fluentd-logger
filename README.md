@@ -31,15 +31,16 @@ app.listen(3000);
 
 ## Parameters
  - **tag**: String of tag name on fluentd. (default: `debug`)
+ - **label**: String of label name on fluentd. (default: `access`)
  - **options**: Object of fluentd connection. (default: `{ host: '127.0.0.1', port: 24224, timeout: 3.0 }`)
 
-## Logging HTTP response headers
-This middleware will record the http response header, if you specify `options.responseHeaders` as following.
+## Logging HTTP Response Headers
+This middleware will record the http response header, if you specify `options.responseHeaders` as follows...
 ```js
 var app = require('express')();
 var logger = require('express-fluent-logger');
 
-app.use(logger('tagName', { host: '127.0.0.1', port: 24224, timeout: 3.0, responseHeaders: ['x-userid'] }));
+app.use(logger('tagName', 'label', { host: '127.0.0.1', port: 24224, timeout: 3.0, responseHeaders: ['x-userid'] }));
 
 app.get('/', function(req, res) {
   res.send('hello world!');

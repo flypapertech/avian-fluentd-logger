@@ -12,11 +12,12 @@ var debug = require('debug')('express-fluent-logger');
  * Create a fluent logger middleware.
  *
  * @public
- * @param {String|Function} tag
+ * @param {String|Object} tag
+ * @param {String|Object} label
  * @param {Object} options
  * @return {Function}
  */
-exports = module.exports = function expressFluentLogger(tag, options) {
+exports = module.exports = function expressFluentLogger(tag, label, options) {
   if (typeof tag === 'object') {
     options = tag;
     tag = 'debug';
@@ -24,6 +25,15 @@ exports = module.exports = function expressFluentLogger(tag, options) {
 
   if (typeof tag === 'undefined') {
     tag = 'debug';
+  }
+
+  if (typeof label === 'object') {
+    options = label;
+    label = 'access';
+  }
+
+  if (typeof label === 'undefined') {
+    label = 'access';
   }
 
   options = options || { host: '127.0.0.1', port: 24224, timeout: 3.0 };
@@ -70,7 +80,7 @@ exports = module.exports = function expressFluentLogger(tag, options) {
           logObject[key.toLowerCase()] = res.get(key);
         });
 
-      logger.emit('access', logObject);
+      logger.emit(label, logObject);
     }
 
     res.on('finish', emitHandler);
