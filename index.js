@@ -80,7 +80,7 @@ exports = module.exports = function expressFluentLogger(tag, label, options) {
           logObject[key.toLowerCase()] = res.get(key);
         });
 
-      logger.emit(label, {level: 'info', mode: proccess.env.NODE_MODE, logObject});
+      logger.emit(label, {level: 'info', mode: proccess.env.NODE_ENV, logObject});
     }
 
     res.on('finish', emitHandler);
