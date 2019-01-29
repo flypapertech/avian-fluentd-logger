@@ -43,12 +43,12 @@ exports = module.exports = function expressFluentLogger(tag, label, options) {
   logger.on('error', debug);
 
   return function(req, res, next) {
-    var start = new Date()
+    var start = new Date();
     function emitHandler() {
       res.removeListener('finish', emitHandler);
       res.removeListener('close',  emitHandler);
       var logObject = {
-        'timestamp':      start.now(),
+        'timestamp':      start.getTime(),
         'remote-address': req.ip,
         'method':         req.method,
         'url':            req.protocol + '://' + req.get('host') + req.originalUrl ? req.originalUrl : req.url,
@@ -56,7 +56,7 @@ exports = module.exports = function expressFluentLogger(tag, label, options) {
         'status':         res.statusCode,
         'content-length': res.get('content-length'),
         'referrer':       req.get('referrer') || req.get('referer') || '',
-        'response-time':  new Date().now() - start
+        'response-time':  new Date() - start
       };
 
       // logging request headers.
