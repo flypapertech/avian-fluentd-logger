@@ -66,7 +66,11 @@ exports = module.exports = function expressFluentLogger(options) {
           record[key.toLowerCase()] = res.get(key);
         });
 
+        let componentName = req.path.split("/")
+        componentName = componentName[1]
+
       logger.emit(options.label || "server", {
+        component: componentName || null,
         level: options.level || "info",
         mode: options.mode || "development",
         record
