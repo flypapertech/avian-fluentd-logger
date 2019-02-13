@@ -1,7 +1,6 @@
 "use strict"
 
-import logger, { configure, on, emit } from "fluent-logger"
-
+const logger = require("fluent-logger")
 const debug = require("debug")("fluentd-logger-middleware")
 
 /**
@@ -20,9 +19,9 @@ exports = module.exports = function fluentdLoggerMiddleware(options) {
         configure: { host: "127.0.0.1", port: 24224, timeout: 3.0 },
     }
 
-    configure(options.tag, options.configure)
+    logger.configure(options.tag, options.configure)
 
-    on("error", debug)
+    logger.on("error", debug)
 
     return function(req, res, next) {
         var start = new Date()
@@ -77,7 +76,7 @@ exports = module.exports = function fluentdLoggerMiddleware(options) {
             let componentName = req.path.split("/")
             componentName = componentName[1]
 
-            emit(options.label || "server", {
+            logger.emit(options.label || "server", {
                 component: componentName || null,
                 level: options.level || "info",
                 mode: options.mode || "development",
