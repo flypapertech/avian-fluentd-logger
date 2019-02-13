@@ -48,7 +48,7 @@ exports = module.exports = function fluentdLoggerMiddleware(options) {
              * Request Headers
              */
             Object.keys(req.headers)
-                .filter(function(key) {
+                .filter(key => {
                     return (
                         key !== "host" &&
                         key !== "connection" &&
@@ -56,7 +56,7 @@ exports = module.exports = function fluentdLoggerMiddleware(options) {
                         key !== "referer"
                     )
                 })
-                .forEach(function(key) {
+                .forEach(key => {
                     key = key.toLowerCase()
                     record[key] = req.get(key)
                 })
@@ -66,10 +66,10 @@ exports = module.exports = function fluentdLoggerMiddleware(options) {
              */
             options.responseHeaders = options.responseHeaders || []
             options.responseHeaders
-                .filter(function(key) {
+                .filter(key => {
                     return res.get(key)
                 })
-                .forEach(function(key) {
+                .forEach(key => {
                     key = key.toLowerCase()
                     record[key.toLowerCase()] = res.get(key)
                 })
