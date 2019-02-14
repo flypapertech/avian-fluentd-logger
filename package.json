@@ -16,7 +16,7 @@
         }
     },
     "lint-staged": {
-        "*.{js,json,css,md}": [
+        "*.{js,json,md}": [
             "prettier --write",
             "git add"
         ]
@@ -35,21 +35,15 @@
     "files": [
         "README.md",
         "index.js",
-        "package.json",
-        "test"
+        "package.json"
     ],
     "keywords": [
-        "express.js",
+        "express",
         "avian",
         "scribe",
         "fluentd",
         "logger"
     ],
     "license": "MIT",
-    "repository": "flypapertech/fluentd-logger-middleware",
-    "scripts": {
-        "codeclimate": "cat ./coverage/lcov.info | ./node_modules/.bin/codeclimate-test-reporter",
-        "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
-        "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec --exit"
-    }
+    "repository": "flypapertech/fluentd-logger-middleware"
 }
