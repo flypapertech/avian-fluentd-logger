@@ -1,7 +1,7 @@
 {
     "name": "@flypapertech/fluentd-logger-middleware",
     "description": "Fluentd logging middleware for Avian, Scribe, and Express applications.",
-    "version": "0.3.7",
+    "version": "0.3.8",
     "author": "Toshiya SAITOH <stoshiya@gmail.com>",
     "publishConfig": {
         "access": "public"
