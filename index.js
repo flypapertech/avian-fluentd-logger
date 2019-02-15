@@ -11,13 +11,17 @@ const debug = require("debug")("fluentd-logger-middleware")
  * @return {Function}
  */
 exports = module.exports = function fluentdLoggerMiddleware(options) {
-    options = options || {
+    const defaultOptions = {
+        source: "Access",
         level: "info",
         mode: "development",
         tag: "debug",
         label: "server",
         configure: { host: "127.0.0.1", port: 24224, timeout: 3.0 },
+        responseHeaders: [],
     }
+
+    options = Object.assign(defaultOptions, options)
 
     logger.configure(options.tag, options.configure)
 
@@ -63,7 +67,6 @@ exports = module.exports = function fluentdLoggerMiddleware(options) {
             /**
              * Response Headers
              */
-            options.responseHeaders = options.responseHeaders || []
             options.responseHeaders
                 .filter(key => {
                     return res.get(key)
@@ -73,13 +76,10 @@ exports = module.exports = function fluentdLoggerMiddleware(options) {
                     record[key.toLowerCase()] = res.get(key)
                 })
 
-            let componentName = req.path.split("/")
-            componentName = componentName[1]
-
-            logger.emit(options.label || "server", {
-                component: componentName || null,
-                level: options.level || "info",
-                mode: options.mode || "development",
+            logger.emit(options.label, {
+                source: options.source,
+                level: options.level,
+                mode: options.mode,
                 record,
             })
         }
